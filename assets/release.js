@@ -8,19 +8,17 @@ for (const root of document.querySelectorAll('[data-example-player]')) {
     if (!r.ok) throw Error('Could not load example data');
     return r.json();
   }).then(cases => {
-    const select = root.querySelector('.example-select');
     function update() {
-      const c = cases.find(c => c.id === select.value);
+      const c = cases[0];
       root.querySelectorAll('audio').forEach(a => a.pause());
       root.querySelector('.example-source').textContent = c.source;
       root.querySelector('.example-question').textContent = c.question;
-      root.querySelector('.example-correction').textContent = c.correction ? `Clarification during speech: “${c.correction}”` : '';
       root.querySelector('.example-answer').textContent = c.answer;
       root.querySelector('.conversation-audio').src = c.audio.conversation;
       root.querySelector('.model-audio').src = c.audio.played;
       if (c.guidance) {
         root.querySelector('.example-guidance').textContent = c.guidance;
-        root.querySelector('.example-detail').textContent = `${c.policy === 'model' ? 'Model-triggered dispatch' : 'One explicitly forced dispatch'} · S2 ${c.s2_seconds.toFixed(3)} s · ${c.s2_tokens} completion tokens`;
+        root.querySelector('.example-detail').textContent = `Model-triggered dispatch · S2 ${c.s2_seconds.toFixed(3)} s · ${c.s2_tokens} completion tokens`;
       }
       const tracks = [];
       if (c.alignment) {
@@ -28,10 +26,6 @@ for (const root of document.querySelectorAll('[data-example-player]')) {
         tracks.push(['S2 request', c.alignment.s2.map(x => ({start:x.start_seconds, end:x.end_seconds, tone:'s2'}))]);
         tracks.push(['Speech', c.alignment.speech.map(x => ({start:x.start_seconds, end:x.end_seconds, tone:'speech'}))]);
         tracks.push(['Guidance', c.alignment.handoffs.map(x => ({start:x.at_seconds, end:x.at_seconds + .1, tone:'s2'}))]);
-      } else {
-        const events = c.events;
-        tracks.push(['S1 requests', events.filter(x => x.lane === 'thinker').map(x => ({start:x.start,end:x.end}))]);
-        tracks.push(['Speech path', events.filter(x => ['audio','talker'].includes(x.lane)).map(x => ({start:x.start,end:x.end,tone:'speech'}))]);
       }
       const end = Math.ceil(Math.max(1, ...tracks.flatMap(x => x[1].map(b => b.end))));
       const holder = root.querySelector('.example-timeline'); holder.replaceChildren();
@@ -52,7 +46,7 @@ for (const root of document.querySelectorAll('[data-example-player]')) {
       for (const value of [0,end/2,end]) { const span=document.createElement('span');span.textContent=`${value} s`;axis.append(span); }
       holder.append(axis);
     }
-    select.addEventListener('change',update);update();
+    update();
   }).catch(error => {
     const status=document.createElement('p'); status.setAttribute('role','status');
     status.textContent='Example timing could not load. The default audio remains available.';root.append(status);
