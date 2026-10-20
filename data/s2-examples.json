@@ -1,0 +1,188 @@
+[
+  {
+    "id": "S2-R02d",
+    "label": "Arithmetic · model-triggered S2",
+    "question": "Please calculate seventeen times twenty-three.",
+    "answer": "Sure, let me work that out. The result is 391.",
+    "source": "Authored Flite SLT synthetic speech",
+    "guidance": "391",
+    "policy": "model",
+    "s2_seconds": 1.3593752537854016,
+    "s2_tokens": 296,
+    "alignment": {
+      "clock": "seconds from first submitted user audio packet",
+      "user_audio_seconds": 3.835,
+      "user_text": "Please calculate seventeen times twenty-three.",
+      "speech": [
+        {
+          "chunk": 6,
+          "text": "Sure,",
+          "start_seconds": 3.426,
+          "end_seconds": 3.806
+        },
+        {
+          "chunk": 7,
+          "text": "let",
+          "start_seconds": 3.806,
+          "end_seconds": 4.286
+        },
+        {
+          "chunk": 8,
+          "text": "me work",
+          "start_seconds": 4.286,
+          "end_seconds": 4.766
+        },
+        {
+          "chunk": 9,
+          "text": "that out.",
+          "start_seconds": 4.766,
+          "end_seconds": 5.246
+        },
+        {
+          "chunk": 11,
+          "text": "The result",
+          "start_seconds": 5.866,
+          "end_seconds": 6.206
+        },
+        {
+          "chunk": 12,
+          "text": "is",
+          "start_seconds": 6.206,
+          "end_seconds": 6.686
+        },
+        {
+          "chunk": 13,
+          "text": "391.",
+          "start_seconds": 6.686,
+          "end_seconds": 7.166
+        }
+      ],
+      "s2": [
+        {
+          "start_seconds": 3.552,
+          "end_seconds": 4.912,
+          "completion_tokens": 296,
+          "reasoning_character_count": 652
+        }
+      ],
+      "handoffs": [
+        {
+          "at_seconds": 5.281,
+          "command": "391"
+        }
+      ]
+    },
+    "audio": {
+      "conversation": "assets/reproduction/s2-r02d-conversation.flac",
+      "played": "assets/reproduction/s2-r02d-played.flac"
+    }
+  },
+  {
+    "id": "S2-01b",
+    "label": "Human question · forced S2",
+    "question": "Umm what's the difference between an outlet and a regular store?",
+    "answer": "An outlet is a store that sells discounted items, a regular store sells products at full price.",
+    "source": "Original DailyTalk human recording",
+    "guidance": "Outlet stores sell discounted items; regular stores sell products at full price.",
+    "policy": "force_once_after_input",
+    "s2_seconds": 1.5363372800020443,
+    "s2_tokens": 336,
+    "alignment": {
+      "clock": "seconds from first submitted user audio packet",
+      "user_audio_seconds": 5.02,
+      "user_text": "Umm what's the difference between an outlet and a regular store?",
+      "speech": [
+        {
+          "chunk": 10,
+          "text": "An outlet",
+          "start_seconds": 5.342,
+          "end_seconds": 5.722
+        },
+        {
+          "chunk": 11,
+          "text": "is",
+          "start_seconds": 5.722,
+          "end_seconds": 6.202
+        },
+        {
+          "chunk": 12,
+          "text": "a store",
+          "start_seconds": 6.202,
+          "end_seconds": 6.682
+        },
+        {
+          "chunk": 13,
+          "text": "that sells",
+          "start_seconds": 6.682,
+          "end_seconds": 7.162
+        },
+        {
+          "chunk": 14,
+          "text": "discounted",
+          "start_seconds": 7.162,
+          "end_seconds": 7.642
+        },
+        {
+          "chunk": 15,
+          "text": "items.",
+          "start_seconds": 7.642,
+          "end_seconds": 8.122
+        },
+        {
+          "chunk": 17,
+          "text": "A regular",
+          "start_seconds": 8.602,
+          "end_seconds": 9.082
+        },
+        {
+          "chunk": 18,
+          "text": "store",
+          "start_seconds": 9.082,
+          "end_seconds": 9.562
+        },
+        {
+          "chunk": 19,
+          "text": "sells",
+          "start_seconds": 9.562,
+          "end_seconds": 10.042
+        },
+        {
+          "chunk": 20,
+          "text": "products",
+          "start_seconds": 10.042,
+          "end_seconds": 10.522
+        },
+        {
+          "chunk": 21,
+          "text": "at full",
+          "start_seconds": 10.522,
+          "end_seconds": 10.982
+        },
+        {
+          "chunk": 22,
+          "text": "price.",
+          "start_seconds": 11.002,
+          "end_seconds": 11.482
+        }
+      ],
+      "s2": [
+        {
+          "start_seconds": 4.993,
+          "end_seconds": 6.53,
+          "completion_tokens": 336,
+          "reasoning_character_count": 1559
+        }
+      ],
+      "handoffs": [
+        {
+          "at_seconds": 6.721,
+          "command": "Outlet stores sell discounted items; regular stores sell products at full price."
+        }
+      ]
+    },
+    "audio": {
+      "conversation": "assets/reproduction/s2-01b-conversation.flac",
+      "played": "assets/reproduction/s2-01b-played.flac"
+    }
+  }
+]
