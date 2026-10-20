@@ -1,1 +1,210 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="description" content="A model-triggered S2 calculation returns 391 and becomes audible speech."><meta name="referrer" content="no-referrer"><title>S2 math experiment · AI2AI 2026 Duplex</title><link rel="stylesheet" href="assets/release.css"></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-nav"><div class="nav-inner"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">◒</span> AI2AI <span>2026 / Duplex</span></a><nav class="nav-links" aria-label="Main navigation"><a href="index.html">Project report</a><a href="architecture.html">Model architecture</a><a href="reproduction.html" aria-current="page">Experiments</a><a href="benchmarks.html">Benchmarks</a><a href="ami-questions.html">AMI questions</a></nav></div></header><main id="main" class="container"><header class="hero"><p class="eyebrow">Experiment / S2 reasoning</p><h1>A calculation becomes a spoken answer.</h1><p class="lede">S1 recognizes the math request, starts S2 through its own THINK signal, and speaks the returned result while maintaining the streaming interaction loop.</p></header><nav class="review-tabs" aria-label="Experiment pages"><a href="reproduction.html">All experiments</a><a href="s2.html" aria-current="page">S2 math</a></nav><section class="section" id="listen"><h2>Listen to the math experiment</h2><div class="example-player" data-example-player="s2" data-examples="data/s2-examples.json"><h3>Model-triggered calculation</h3><p class="example-source meta">Authored Flite SLT synthetic speech</p><div class="question-box"><span class="eyebrow">User request</span><blockquote class="example-question">Please calculate seventeen times twenty-three.</blockquote></div><div class="audio-grid"><div><h3>Full replay</h3><p class="meta">User left · model right · original pauses</p><audio class="conversation-audio" controls preload="metadata" src="assets/reproduction/s2-r02d-conversation.flac"></audio></div><div><h3>Model playback</h3><p class="meta">The audio actually played</p><audio class="model-audio" controls preload="metadata" src="assets/reproduction/s2-r02d-played.flac"></audio></div></div><h3>Spoken response</h3><blockquote class="example-answer">Sure, let me work that out. The result is 391.</blockquote><div class="guidance-panel"><h3>S2 guidance delivered to S1</h3><blockquote class="example-guidance">391</blockquote><p class="example-detail"></p></div><figure class="timing-figure"><div class="example-timeline"></div><figcaption>Figure 1. Captured request and speech intervals, in seconds from the first submitted input packet. Bars show request or speech-chunk timing.</figcaption></figure></div></section><section class="section" id="arithmetic"><h2>The model-triggered calculation</h2><p>The user says <strong>“Please calculate seventeen times twenty-three.”</strong> S1 transcribes the request and emits its own <code>[THINK]</code> at tick 7. The controller sends S1’s actual accumulated user transcription to Qwen3-4B-Thinking-2507.</p><p>S2 completes in <strong>1.359 seconds</strong>, using <strong>296 completion tokens</strong>, and returns <strong>391</strong>. The controller delivers that plain text in <code>from_s2</code> at tick 11. Independent transcription of played speech reads <strong>“Sure, let me work that out. The result is 391.”</strong> S1’s initial acknowledgment overlaps the active S2 request.</p><figure class="flow-figure"><div class="flow"><div class="flow-node">S1 hears “17 times 23”</div><span class="arrow" aria-hidden="true">→</span><div class="flow-node">S1 emits [THINK]</div><span class="arrow" aria-hidden="true">→</span><div class="flow-node">S2 returns 391</div><span class="arrow" aria-hidden="true">→</span><div class="flow-node">from_s2 at tick 11</div><span class="arrow" aria-hidden="true">→</span><div class="flow-node">S1 speaks the result</div></div><figcaption>Figure 2. The observed arithmetic handoff, from recognition to audible result.</figcaption></figure></section><section class="section" id="setup"><h2>Models, scheduling and resources</h2><p>The experiment uses <strong>2 × H100 SXM 80 GB</strong>. GPU 0 hosts the complete S1 stack: Thinker, Talker, MTP and Code2Wav. GPU 1 hosts Qwen3-4B-Thinking-2507 alone. Both services load before a latency calibration checks S1 and speech requests with S2 idle and under load. The math experiment follows this calibration, with a maximum of two GPUs active and no overlapping experiment job.</p><div class="table-wrap"><table><caption>Table 1. Math experiment settings.</caption><thead><tr><th scope="col">Setting</th><th scope="col">Value</th></tr></thead><tbody><tr><td>S1 input clock / playback clock</td><td>480 ms / 20 ms</td></tr><tr><td>S1 sampling / history</td><td>Temperature 0 / raw model replies retained</td></tr><tr><td>S1 context / output cap</td><td>4,096 tokens / 256 tokens per request</td></tr><tr><td>Talker decoding</td><td>25-frame bounded decoder context; Talker + MTP share one engine</td></tr><tr><td>S2 sampling</td><td>Temperature 0.6; top_p 0.95; top_k 20; seed 17</td></tr><tr><td>S2 context / output cap</td><td>8,192 / 4,096 tokens</td></tr></tbody></table></div><p>This component experiment connects model-triggered reasoning with audible output. The project’s policy-learning objective also covers multi-speaker context, tool actions, and response timing.</p></section><section class="section" id="sources"><h2>Model and audio sources</h2><p><a href="https://huggingface.co/MuyeHuang/DuplexOmni">DuplexOmni S1</a> · <a href="https://huggingface.co/Qwen/Qwen3-4B-Thinking-2507">Qwen3-4B-Thinking-2507 S2</a>. The math request is authored speech synthesized with <a href="https://github.com/festvox/flite/tree/v2.2">Flite SLT</a> (<a href="licenses/flite.txt">license</a>). The replay preserves the audio that reached playback and its original pauses.</p></section></main><footer class="container site-footer"><p>AI2AI 2026 · Duplex speech systems</p><a href="index.html">Project report</a><a href="architecture.html">Model architecture</a><a href="reproduction.html">Experiments</a><a href="benchmarks.html">Benchmarks</a><a href="ami-questions.html">AMI questions</a></footer><script src="assets/release.js" defer></script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><meta name="description" content="A model-triggered S2 calculation returns 391 and becomes audible speech."><meta name="referrer" content="no-referrer"><title>S2 math experiment · AI2AI 2026 Duplex</title><link rel="stylesheet" href="assets/release.css"><style>#appendix .handoff-tick td{background:var(--surface-2)}#appendix td:last-child{min-width:330px}#appendix td:first-child{font-weight:700}</style></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-nav"><div class="nav-inner"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">◒</span> AI2AI <span>2026 / Duplex</span></a><nav class="nav-links" aria-label="Main navigation"><a href="index.html">Project report</a><a href="architecture.html">Model architecture</a><a href="reproduction.html" aria-current="page">Experiments</a><a href="benchmarks.html">Benchmarks</a><a href="ami-questions.html">AMI questions</a></nav></div></header><main id="main" class="container"><header class="hero"><p class="eyebrow">Experiment / S2 reasoning</p><h1>A calculation becomes a spoken answer.</h1><p class="lede">S1 recognizes the math request, starts S2 through its own THINK signal, and speaks the returned result while maintaining the streaming interaction loop.</p></header><nav class="review-tabs" aria-label="Experiment pages"><a href="reproduction.html">All experiments</a><a href="s2.html" aria-current="page">S2 math</a><a href="#appendix">Appendix · JSON and prompt</a></nav><section class="section" id="listen"><h2>Listen to the math experiment</h2><div class="example-player" data-example-player="s2" data-examples="data/s2-examples.json"><h3>Model-triggered calculation</h3><p class="example-source meta">Authored Flite SLT synthetic speech</p><div class="question-box"><span class="eyebrow">User request</span><blockquote class="example-question">Please calculate seventeen times twenty-three.</blockquote></div><div class="audio-grid"><div><h3>Full replay</h3><p class="meta">User left · model right · original pauses</p><audio class="conversation-audio" controls preload="metadata" src="assets/reproduction/s2-r02d-conversation.flac"></audio></div><div><h3>Model playback</h3><p class="meta">The audio actually played</p><audio class="model-audio" controls preload="metadata" src="assets/reproduction/s2-r02d-played.flac"></audio></div></div><h3>Spoken response</h3><blockquote class="example-answer">Sure, let me work that out. The result is 391.</blockquote><div class="guidance-panel"><h3>S2 guidance delivered to S1</h3><blockquote class="example-guidance">391</blockquote><p class="example-detail"></p></div><figure class="timing-figure"><div class="example-timeline"></div><figcaption>Figure 1. Captured request and speech intervals, in seconds from the first submitted input packet. Bars show request or speech-chunk timing.</figcaption></figure></div></section><section class="section" id="arithmetic"><h2>The model-triggered calculation</h2><p>The user says <strong>“Please calculate seventeen times twenty-three.”</strong> S1 transcribes the request and emits its own <code>[THINK]</code> at tick 7. The controller sends S1’s actual accumulated user transcription to Qwen3-4B-Thinking-2507.</p><p>S2 completes in <strong>1.359 seconds</strong>, using <strong>296 completion tokens</strong>, and returns <strong>391</strong>. The controller delivers that plain text in <code>from_s2</code> at tick 11. Independent transcription of played speech reads <strong>“Sure, let me work that out. The result is 391.”</strong> S1’s initial acknowledgment overlaps the active S2 request.</p><figure class="flow-figure"><div class="flow"><div class="flow-node">S1 hears “17 times 23”</div><span class="arrow" aria-hidden="true">→</span><div class="flow-node">S1 emits [THINK]</div><span class="arrow" aria-hidden="true">→</span><div class="flow-node">S2 returns 391</div><span class="arrow" aria-hidden="true">→</span><div class="flow-node">from_s2 at tick 11</div><span class="arrow" aria-hidden="true">→</span><div class="flow-node">S1 speaks the result</div></div><figcaption>Figure 2. The observed arithmetic handoff, from recognition to audible result.</figcaption></figure></section><section class="section" id="setup"><h2>Models, scheduling and resources</h2><p>The experiment uses <strong>2 × H100 SXM 80 GB</strong>. GPU 0 hosts the complete S1 stack: Thinker, Talker, MTP and Code2Wav. GPU 1 hosts Qwen3-4B-Thinking-2507 alone. Both services load before a latency calibration checks S1 and speech requests with S2 idle and under load. The math experiment follows this calibration, with a maximum of two GPUs active and no overlapping experiment job.</p><div class="table-wrap"><table><caption>Table 1. Math experiment settings.</caption><thead><tr><th scope="col">Setting</th><th scope="col">Value</th></tr></thead><tbody><tr><td>S1 input clock / playback clock</td><td>480 ms / 20 ms</td></tr><tr><td>S1 sampling / history</td><td>Temperature 0 / raw model replies retained</td></tr><tr><td>S1 context / output cap</td><td>4,096 tokens / 256 tokens per request</td></tr><tr><td>Talker decoding</td><td>25-frame bounded decoder context; Talker + MTP share one engine</td></tr><tr><td>S2 sampling</td><td>Temperature 0.6; top_p 0.95; top_k 20; seed 17</td></tr><tr><td>S2 context / output cap</td><td>8,192 / 4,096 tokens</td></tr></tbody></table></div><p>This component experiment connects model-triggered reasoning with audible output. The project’s policy-learning objective also covers multi-speaker context, tool actions, and response timing.</p></section><section class="section" id="sources"><h2>Model and audio sources</h2><p><a href="https://huggingface.co/MuyeHuang/DuplexOmni">DuplexOmni S1</a> · <a href="https://huggingface.co/Qwen/Qwen3-4B-Thinking-2507">Qwen3-4B-Thinking-2507 S2</a>. The math request is authored speech synthesized with <a href="https://github.com/festvox/flite/tree/v2.2">Flite SLT</a> (<a href="licenses/flite.txt">license</a>). The replay preserves the audio that reached playback and its original pauses.</p></section><section class="section" id="appendix"><h2>Appendix · S1 JSON chunks and the S2 prompt</h2><p>This appendix uses the same captured math run as the audio above. Each tick processes the next 480 ms audio slice. The saved S1 response fields are rendered as JSON, preserving their values, trailing spaces, and empty strings; the original reply text was parsed as a Python literal.</p><div class="button-row"><a class="button" href="data/math-s1-chunks.jsonl" download>Download all S1 chunks · JSONL</a><a class="button" href="data/math-s2-prompt.json" download>Download complete S2 prompt · JSON</a></div><h3>From S1’s words to S2’s prompt</h3><p>S1’s <code>asr</code> values through tick 7 assemble into <strong>“Please calculate 17 times 23.”</strong> At tick 7, S1 also emits <code>system2_control: "[THINK]"</code>. The controller uses the recorded <code>user_only</code> context policy to send S2 its system instruction and the accumulated recognized request. S1’s acknowledgment and control fields stay in the interaction loop.</p><details id="s2-prompt" open><summary>Complete prompt sent to S2 · system and user messages</summary><p>The two role/content messages below are the complete chat input saved at dispatch. The system instruction comes from the controller configuration; S1 supplies the recognized request. Unicode escapes represent the original command delimiters. The local S2 server applies the model’s chat template to these messages; its usage record reports <strong>105 prompt tokens</strong>.</p><pre id="math-s2-prompt">[
+  {
+    &quot;role&quot;: &quot;system&quot;,
+    &quot;content&quot;: &quot;You are System 2 helping a voice assistant answer the latest complete user request. Work it out privately, then give one concise final answer in English, at most 25 words. Enclose the complete answer in \u3010 and \u3011. For arithmetic, give the calculation and its result. Use User text as the request; Agent text is only context. Do not greet or invent access to tools.&quot;
+  },
+  {
+    &quot;role&quot;: &quot;user&quot;,
+    &quot;content&quot;: &quot;Please calculate 17 times 23.&quot;
+  }
+]</pre></details><h3>How the result returns to speech</h3><p>S2’s final-content field is <code>&quot;\n\n\u3010391\u3011&quot;</code>. The controller extracts the completed clause, removes the command delimiters, and supplies <code>"391"</code> in S1’s <code>from_s2</code> input at tick 11. S1 then emits <code>"The result "</code>, <code>"is "</code>, and <code>"391."</code> at ticks 11–13.</p><details id="s1-chunks"><summary>Inspect all 40 S1 JSON chunks</summary><div class="table-wrap"><table><caption>Table 2. All 40 S1 responses. Tick indices are zero-based. Start times are measured seconds from the first submitted input packet; from_s2 is an input to S1, and the JSON column contains S1’s output fields.</caption><thead><tr><th scope="col">Tick</th><th scope="col">S1 request start (s)</th><th scope="col">from_s2 input</th><th scope="col">S1 response fields</th></tr></thead><tbody><tr class="s1-chunk-record" data-chunk="0"><td>0</td><td>0.000</td><td><code>""</code></td><td><pre>{
+  "tts_control": "",
+  "system2_control": "",
+  "asr": "",
+  "tts": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="1"><td>1</td><td>0.481</td><td><code>""</code></td><td><pre>{
+  "asr": "Please ",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="2"><td>2</td><td>0.961</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="3"><td>3</td><td>1.441</td><td><code>""</code></td><td><pre>{
+  "asr": "calculate ",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="4"><td>4</td><td>1.921</td><td><code>""</code></td><td><pre>{
+  "asr": "17 ",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="5"><td>5</td><td>2.401</td><td><code>""</code></td><td><pre>{
+  "asr": "times ",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="6"><td>6</td><td>2.880</td><td><code>""</code></td><td><pre>{
+  "asr": "23.",
+  "tts": "Sure, ",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record handoff-tick" data-chunk="7"><td>7</td><td>3.361</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "let ",
+  "tts_control": "",
+  "system2_control": "[THINK]"
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="8"><td>8</td><td>3.841</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "me work ",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="9"><td>9</td><td>4.321</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "that out.",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="10"><td>10</td><td>4.800</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record handoff-tick" data-chunk="11"><td>11</td><td>5.281</td><td><code>"391"</code></td><td><pre>{
+  "asr": "",
+  "tts": "The result ",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="12"><td>12</td><td>5.761</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "is ",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="13"><td>13</td><td>6.241</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "391.",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="14"><td>14</td><td>6.721</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="15"><td>15</td><td>7.201</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="16"><td>16</td><td>7.681</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="17"><td>17</td><td>8.161</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="18"><td>18</td><td>8.641</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="19"><td>19</td><td>9.121</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="20"><td>20</td><td>9.600</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="21"><td>21</td><td>10.080</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="22"><td>22</td><td>10.561</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="23"><td>23</td><td>11.041</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="24"><td>24</td><td>11.521</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="25"><td>25</td><td>12.001</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="26"><td>26</td><td>12.481</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="27"><td>27</td><td>12.960</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="28"><td>28</td><td>13.441</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="29"><td>29</td><td>13.920</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="30"><td>30</td><td>14.401</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="31"><td>31</td><td>14.881</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="32"><td>32</td><td>15.361</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="33"><td>33</td><td>15.840</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="34"><td>34</td><td>16.321</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="35"><td>35</td><td>16.800</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="36"><td>36</td><td>17.281</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="37"><td>37</td><td>17.761</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="38"><td>38</td><td>18.241</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr><tr class="s1-chunk-record" data-chunk="39"><td>39</td><td>18.721</td><td><code>""</code></td><td><pre>{
+  "asr": "",
+  "tts": "",
+  "tts_control": "",
+  "system2_control": ""
+}</pre></td></tr></tbody></table></div></details></section></main><footer class="container site-footer"><p>AI2AI 2026 · Duplex speech systems</p><a href="index.html">Project report</a><a href="architecture.html">Model architecture</a><a href="reproduction.html">Experiments</a><a href="benchmarks.html">Benchmarks</a><a href="ami-questions.html">AMI questions</a></footer><script src="assets/release.js" defer></script></body></html>

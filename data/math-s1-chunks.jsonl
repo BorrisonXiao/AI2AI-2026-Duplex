@@ -1,0 +1,40 @@
+{"chunk": 0, "request_start_seconds": 0.00024946313351392746, "response_received_seconds": 0.15907753608189523, "from_s2": "", "response": {"tts_control": "", "system2_control": "", "asr": "", "tts": ""}}
+{"chunk": 1, "request_start_seconds": 0.48063884512521327, "response_received_seconds": 0.6511041941121221, "from_s2": "", "response": {"asr": "Please ", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 2, "request_start_seconds": 0.960894346004352, "response_received_seconds": 1.1239229149650782, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 3, "request_start_seconds": 1.441327844047919, "response_received_seconds": 1.6143320121336728, "from_s2": "", "response": {"asr": "calculate ", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 4, "request_start_seconds": 1.9207088861148804, "response_received_seconds": 2.1008871011435986, "from_s2": "", "response": {"asr": "17 ", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 5, "request_start_seconds": 2.4009835361503065, "response_received_seconds": 2.574988862965256, "from_s2": "", "response": {"asr": "times ", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 6, "request_start_seconds": 2.8804296960588545, "response_received_seconds": 3.0757183160167187, "from_s2": "", "response": {"asr": "23.", "tts": "Sure, ", "tts_control": "", "system2_control": ""}}
+{"chunk": 7, "request_start_seconds": 3.360938647063449, "response_received_seconds": 3.5515991600695997, "from_s2": "", "response": {"asr": "", "tts": "let ", "tts_control": "", "system2_control": "[THINK]"}}
+{"chunk": 8, "request_start_seconds": 3.8407018310390413, "response_received_seconds": 4.022644035983831, "from_s2": "", "response": {"asr": "", "tts": "me work ", "tts_control": "", "system2_control": ""}}
+{"chunk": 9, "request_start_seconds": 4.320581230102107, "response_received_seconds": 4.503083463059738, "from_s2": "", "response": {"asr": "", "tts": "that out.", "tts_control": "", "system2_control": ""}}
+{"chunk": 10, "request_start_seconds": 4.800348910968751, "response_received_seconds": 4.968287297990173, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 11, "request_start_seconds": 5.281226122984663, "response_received_seconds": 5.465704684145749, "from_s2": "391", "response": {"asr": "", "tts": "The result ", "tts_control": "", "system2_control": ""}}
+{"chunk": 12, "request_start_seconds": 5.760631271172315, "response_received_seconds": 5.941392889013514, "from_s2": "", "response": {"asr": "", "tts": "is ", "tts_control": "", "system2_control": ""}}
+{"chunk": 13, "request_start_seconds": 6.241057178005576, "response_received_seconds": 6.4318817560561, "from_s2": "", "response": {"asr": "", "tts": "391.", "tts_control": "", "system2_control": ""}}
+{"chunk": 14, "request_start_seconds": 6.721080471063033, "response_received_seconds": 6.89300043717958, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 15, "request_start_seconds": 7.200878608040512, "response_received_seconds": 7.373218753142282, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 16, "request_start_seconds": 7.681338194990531, "response_received_seconds": 7.854114382062107, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 17, "request_start_seconds": 8.161026527173817, "response_received_seconds": 8.335279575083405, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 18, "request_start_seconds": 8.640623533166945, "response_received_seconds": 8.815639462089166, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 19, "request_start_seconds": 9.120684363180771, "response_received_seconds": 9.296674670185894, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 20, "request_start_seconds": 9.600342920981348, "response_received_seconds": 9.77736830804497, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 21, "request_start_seconds": 10.080473545007408, "response_received_seconds": 10.257776607992128, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 22, "request_start_seconds": 10.561045079957694, "response_received_seconds": 10.739545674063265, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 23, "request_start_seconds": 11.041074302047491, "response_received_seconds": 11.220997245050967, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 24, "request_start_seconds": 11.520791388116777, "response_received_seconds": 11.701519686030224, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 25, "request_start_seconds": 12.0009929779917, "response_received_seconds": 12.18255253112875, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 26, "request_start_seconds": 12.480956853134558, "response_received_seconds": 12.663116523995996, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 27, "request_start_seconds": 12.96042750007473, "response_received_seconds": 13.142798817018047, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 28, "request_start_seconds": 13.441305973101407, "response_received_seconds": 13.625182654010132, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 29, "request_start_seconds": 13.920481939101592, "response_received_seconds": 14.104644006118178, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 30, "request_start_seconds": 14.40096892695874, "response_received_seconds": 14.58730295416899, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 31, "request_start_seconds": 14.881370957009494, "response_received_seconds": 15.067668379982933, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 32, "request_start_seconds": 15.36109513300471, "response_received_seconds": 15.54747782414779, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 33, "request_start_seconds": 15.840367553057149, "response_received_seconds": 16.028978259069845, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 34, "request_start_seconds": 16.320747210178524, "response_received_seconds": 16.50996573502198, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 35, "request_start_seconds": 16.800266470061615, "response_received_seconds": 16.989985624095425, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 36, "request_start_seconds": 17.280800908105448, "response_received_seconds": 17.471611406188458, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 37, "request_start_seconds": 17.760998303070664, "response_received_seconds": 17.952477852115408, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 38, "request_start_seconds": 18.24079576903023, "response_received_seconds": 18.433610785985366, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
+{"chunk": 39, "request_start_seconds": 18.720933974022046, "response_received_seconds": 18.915632440010086, "from_s2": "", "response": {"asr": "", "tts": "", "tts_control": "", "system2_control": ""}}
