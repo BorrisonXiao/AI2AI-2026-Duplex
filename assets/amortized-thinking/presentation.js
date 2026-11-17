@@ -11,9 +11,26 @@ const descriptions={
  overview_topics_speakers:['Function notes + topics and speakers','The overview also records each speaker’s supported name, role and contribution, plus explicit relationships; earlier versions remain saved.'],
  overview_topics_speakers_voice:['Function notes + topics, speakers and voice','The audio writer also records audible delivery or tentative affect; the final call adds these overview entries to detailed notes and the original speech.']
 };
-let examples,results;
+let examples,results,writerPrompts;
 const pretty=x=>JSON.stringify(x,null,2), current=()=>examples.cases.find(c=>c.id===state.case);
 function detail(title,value){const d=make('details');d.append(make('summary',title),make('pre',typeof value==='string'?value:pretty(value)));return d;}
+function generationPrompt(ids,title){
+ const d=make('details',undefined,'generation-prompt');d.append(make('summary',title),make('p','The current state carries earlier notes; these are the executed inputs for its latest update, including any repair call.'));
+ const records=ids.map(id=>writerPrompts.writers[id]);
+ records.forEach(r=>{
+  const name=results.models[r.model]||r.model;d.append(make('h4',name+' · source through '+r.source_cutoff.toFixed(1)+' seconds'+(r.repair?' · repair call':'')));
+  if(r.messages){
+   r.messages.filter(m=>m.role==='system').forEach(m=>d.append(make('h4','Exact system instruction'),make('pre',m.content)));
+   d.append(detail('Exact update input and previous messages',r.messages.filter(m=>m.role!=='system')));
+   if(r.function_definitions)d.append(detail('Function definitions supplied with this prompt',r.function_definitions));
+  }else{
+   const system=r.native_prompt.match(/<\|im_start\|>system\n([\s\S]*?)<\|im_end\|>/);
+   if(system)d.append(make('h4','Exact system message'),make('pre',system[1]));
+   d.append(detail('Audio segments supplied to this update',r.audio_slots),detail('Complete native prompt, including function definitions and audio markers',r.native_prompt));
+  }
+ });
+ const button=make('button','Download executed writer input','button');button.type='button';button.addEventListener('click',()=>{const blob=new Blob([pretty(records)],{type:'application/json'}),url=URL.createObjectURL(blob),a=make('a');a.href=url;a.download='writer-input.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});d.append(button);return d;
+}
 function pause(){document.querySelectorAll('audio').forEach(a=>a.pause());}
 function audio(title,url,caption){const box=make('article',undefined,'audio-choice');box.append(make('h3',title));if(caption)box.append(make('p',caption,'meta'));const a=make('audio');a.controls=true;a.preload='metadata';a.src=url;a.addEventListener('play',()=>document.querySelectorAll('audio').forEach(other=>{if(other!==a)other.pause();}));box.append(a);return box;}
 function drawSource(){
@@ -39,17 +56,22 @@ function showTrace(branch){
  host.append(make('p',r.study==='pilot8'?'Eight-question overview pilot · source-checked example':'Completed 105-question comparison · recorded example','trace-study'));
  host.append(make('h3','1. Input to the thinker'),make('p',text?'Full speaker-labelled reference transcript + participant’s request in text.':'Original meeting audio + spoken participant request'+(identity==='labelled_voices'?' + labelled past voice examples.':'.')));
  const p=r.prompt;
+ const attachment=writerPrompts.attachments[[r.case,r.model,r.identity,r.condition].join('|')];
  if(text){
-  host.append(detail('Executed system and user prompt',p.messages));
+  host.append(detail('Answer-generation system and user prompt',p.messages));
  }else{
   const instruction=p.system.split(' Current saved notes: ')[0];
-  host.append(detail('Executed instructions before saved notes',instruction),detail('Full executed native prompt and audio-slot metadata',{prompt:p.native_prompt,audio_slots:p.audio_slots}));
+  host.append(detail('Answer-generation instruction',instruction),detail('Full answer-generation prompt and audio input slots',{prompt:p.native_prompt,audio_slots:p.audio_slots}));
  }
  host.append(make('h3','2. Saved view supplied to this answer'));
  if(method==='reactive')host.append(make('p','No generated saved view is included.'));
  else{
   if(p.saved_view!==null&&p.saved_view!==undefined)host.append(detail(method.startsWith('quotes_')?'Actual copied source passages':'Actual current detailed notes',p.saved_view));
+  if(attachment.function_notes.length)host.append(generationPrompt(attachment.function_notes,'Function-note generation prompt · latest update'));
+  if(attachment.quote_note)host.append(make('p',attachment.quote_note,'meta'));
   if(p.overview)host.append(detail('Actual current conversation overview',p.overview));
+  if(attachment.overview.length)host.append(generationPrompt(attachment.overview,'Overview generation prompt · selected content and interval'));
+  if(attachment.overview_note)host.append(make('p',attachment.overview_note,'meta'));
   if(!p.saved_view&&!p.overview)host.append(detail('Saved material in the recorded instruction',p.system));
   if(r.overview_source_cutoff)host.append(make('p','The latest supplied overview uses only speech before '+r.overview_source_cutoff.toFixed(1)+' seconds.','meta'));
  }
@@ -67,7 +89,7 @@ function drawEvents(){
  const events=examples.note_events.filter(r=>r.branch===branch&&r.model===model&&r.meeting===current().meeting).sort((a,b)=>a.cutoff-b.cutoff);
  events.forEach(r=>{const a=make('article',undefined,'writer-event');a.append(make('h3','Recorded update at '+r.cutoff.toFixed(1)+' seconds'),make('p','The writer has not received the later participant question.'));
   if(r.audio_input)a.append(audio('Audio actually supplied to this writer call',r.audio_input,'Clips are concatenated in the recorded prompt order; repeated recent context is retained.'));
-  a.append(detail('Writer input prompt',r.messages||r.prompt),make('h4','Generated function calls'),make('pre',pretty(r.operations)),detail('Program results for those calls',r.receipts),detail('Actual saved state after accepted edits',r.saved_state_after));host.append(a);});
+  a.append(detail('Generation prompt for this note update',r.messages||r.prompt));if(r.tools)a.append(detail('Function definitions supplied to this update',r.tools));a.append(make('h4','Generated function calls'),make('pre',pretty(r.operations)),detail('Program results for those calls',r.receipts),detail('Actual saved state after accepted edits',r.saved_state_after));host.append(a);});
  if(!events.length)host.append(make('p','No selected writer update for this example.'));
 }
 function drawPilot(){
@@ -85,7 +107,7 @@ function present(on,index){pause();document.body.classList.toggle('presenting',o
 $('present-toggle').addEventListener('click',()=>present(true,0));$('exit-present').addEventListener('click',()=>present(false));$('previous-stage').addEventListener('click',()=>present(true,state.stage-1));$('next-stage').addEventListener('click',()=>present(true,state.stage+1));
 document.addEventListener('keydown',e=>{if(!document.body.classList.contains('presenting'))return;if(e.key==='Escape'){present(false);return;}if(e.target.closest('select,input,textarea,audio,summary,button'))return;if(['ArrowRight','PageDown'].includes(e.key)){e.preventDefault();present(true,state.stage+1);}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();present(true,state.stage-1);}});
 function reveal(){const target=document.getElementById(decodeURIComponent(location.hash.slice(1)));if(!target)return;if(document.body.classList.contains('presenting'))present(false);for(let p=target;p;p=p.parentElement)if(p.tagName==='DETAILS')p.open=true;requestAnimationFrame(()=>target.scrollIntoView({behavior:'instant',block:'start'}));}addEventListener('hashchange',reveal);
-Promise.all(['examples.json','results.json'].map(async name=>{const r=await fetch('data/amortized-thinking/'+name);if(!r.ok)throw Error('HTTP '+r.status);return r.json();})).then(([e,r])=>{examples=e;results=r;render();
+Promise.all(['examples.json','results.json','writer-prompts.json'].map(async name=>{const r=await fetch('data/amortized-thinking/'+name);if(!r.ok)throw Error('HTTP '+r.status);return r.json();})).then(([e,r,w])=>{examples=e;results=r;writerPrompts=w;render();
  $('example-case').addEventListener('change',()=>{pause();state.case=$('example-case').value;render();});
  for(const id of ['text-model','text-period'])$(id).addEventListener('change',()=>showTrace('text'));
  for(const id of ['audio-model','audio-period','audio-identity'])$(id).addEventListener('change',()=>{pause();showTrace('audio');drawVoices();});
